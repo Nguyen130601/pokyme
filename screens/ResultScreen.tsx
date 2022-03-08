@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import React, {Component} from 'react'
+import { SafeAreaView, Text, TouchableOpacity } from 'react-native'
 
 export default function ResultScreen ({ navigation, route }: {navigation: any, route: any}) {
     const playerScore = (route.params) ? route.params.playerScore : 0
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>You earned { playerScore } gold</Text>
         <TouchableOpacity 
           onPress={() => {
@@ -12,6 +13,13 @@ export default function ResultScreen ({ navigation, route }: {navigation: any, r
         >
           <Text>Try quiz again</Text>
         </TouchableOpacity>
-      </View>
+        <TouchableOpacity 
+          onPress={() => {
+            navigation.navigate('Home')
+          }}
+        >
+          <Text>Choose another topic</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     )
   }

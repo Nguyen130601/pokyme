@@ -1,3 +1,4 @@
+import React, {Component} from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useEffect, useCallback} from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
@@ -133,12 +134,14 @@ export default function QuizScreen ({ navigation}: {navigation: any}) {
             setCurrentQuestion(0)
             setPlayerScore(0)
             setAnswer('')
+            clearTimeout(timer)
             navigation.navigate('Result', { playerScore: result })
           }
           else {
             setCurrentQuestion(0)
             setPlayerScore(0)
             setAnswer('')
+            clearTimeout(timer)
             navigation.navigate('Result', { playerScore })
           }
         }}

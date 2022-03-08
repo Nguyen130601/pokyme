@@ -1,21 +1,28 @@
+import React, {Component} from 'react'
 import { StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import HomeScreen from './screens/HomeScreen';
 import QuizScreen from './screens/QuizScreen';
 import ResultScreen from './screens/ResultScreen';
 
-const Stack = createNativeStackNavigator();
+import Tabs from './navigation'
+
+const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Quiz" component={QuizScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name='Result' component={ResultScreen}  options={{ headerShown: false }} />
-      </Stack.Navigator>
+      <Drawer.Navigator
+        screenOptions={{
+          headerShown: false
+        }}
+        initialRouteName='Home'
+      >
+        <Drawer.Screen name="Home" component={Tabs} />
+        <Drawer.Screen name="Quiz" component={QuizScreen} />
+        <Drawer.Screen name='Result' component={ResultScreen} />
+      </Drawer.Navigator>
     </NavigationContainer>
   );
 }
