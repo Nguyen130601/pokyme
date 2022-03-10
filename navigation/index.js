@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 
 import { Image, View } from 'react-native'
 
-import logo from '../assets/icons/cube_icon.png'
-
 import HomeScreen from '../screens/HomeScreen'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -15,13 +13,15 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 
 const Tab = createBottomTabNavigator()
 
-const TabBarCustomButton = ({ accessibilityState, children, onPress }) => {
-    const selected = true
-    if (selected) {
+const TabBarCustomButton = ({ accessibilityState, children, onPress  }) => {
+
+    const isSelected = accessibilityState.selected
+
+    if (isSelected) {
         return (
-            <View>
-                <View>
-                    <View></View>
+            <View style={{ flex: 1, alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', position: 'absolute', top: 0 }}>
+                    <View style={{ flex: 1, backgroundColor: COLORS.white }}></View>
                     <Svg
                         width={70}
                         height={61}
@@ -74,12 +74,15 @@ export default Tabs = () => {
             screenOptions={{
                 tabBarShowLabel: false,
                 tabBarStyle: {
+                    position: 'absolute',
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
                     borderTopWidth: 0,
                     backgroundColor: "transparent",
                     elevation: 0
                 }
             }}
-            initialRouteName='TabOne'
         >
             <Tab.Screen 
                 name='TabOne'
@@ -96,7 +99,7 @@ export default Tabs = () => {
                             }}
                         />
                     ),
-                    tabBarButton: ({props}) => (
+                    tabBarButton: (props) => (
                         <TabBarCustomButton 
                             {...props}
                         />
@@ -117,6 +120,11 @@ export default Tabs = () => {
                                 tintColor: focused ? COLORS.primary : COLORS.secondary
                             }}
                         />
+                    ),
+                    tabBarButton: (props) => (
+                        <TabBarCustomButton 
+                            {...props}
+                        />
                     )
                 }}
             />
@@ -126,13 +134,18 @@ export default Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
-                            source={logo}
+                            source={icons.heart}
                             resizeMode='contain'
                             style={{
                                 width: 25,
                                 height: 25,
                                 tintColor: focused ? COLORS.primary : COLORS.secondary
                             }}
+                        />
+                    ),
+                    tabBarButton: (props) => (
+                        <TabBarCustomButton 
+                            {...props}
                         />
                     )
                 }}
@@ -150,6 +163,11 @@ export default Tabs = () => {
                                 height: 25,
                                 tintColor: focused ? COLORS.primary : COLORS.secondary
                             }}
+                        />
+                    ),
+                    tabBarButton: (props) => (
+                        <TabBarCustomButton 
+                            {...props}
                         />
                     )
                 }}
