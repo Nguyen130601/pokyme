@@ -8,12 +8,12 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
 
     const topics = [
       { 
-        id: 1,
+        id: '1',
         name: 'Animal',
         icon: icons.garden
       }, 
       {
-        id: 2,
+        id: '2',
         name: 'Human',
         icon: icons.flash
       }
@@ -21,14 +21,14 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
 
     const quizlists = [
       {
-        id: 1,
+        id: '1',
         name: 'Animal in the jungle',
         photo: images.plant1,
         level: 'rookie',
         categories: ['Animal', 'Human']
       },
       {
-        id: 2,
+        id: '2',
         name: 'Human in the city',
         photo: images.plant3,
         level: 'rookie',
@@ -66,7 +66,7 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
 
     const renderTopics = () => {
 
-      const [selectedCategory, chooseCategory] = useState(1)
+      const [selectedCategory, chooseCategory] = useState('1')
       const renderItem = ({ item }: {item : any}) => (
         <TouchableOpacity
             style={{
