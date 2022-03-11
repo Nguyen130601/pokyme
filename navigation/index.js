@@ -4,6 +4,9 @@ import { Image, View } from 'react-native'
 
 import HomeScreen from '../screens/HomeScreen'
 
+import LoginScreen from '../screens/LoginScreen'
+import SignupScreen from '../screens/SignupScreen'
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import Svg, { Path } from 'react-native-svg'
@@ -136,7 +139,7 @@ export default Tabs = () => {
             />
             <Tab.Screen 
                 name='TabThree'
-                component={ResultScreen}
+                component={LoginScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
@@ -158,7 +161,7 @@ export default Tabs = () => {
             />
             <Tab.Screen 
                 name='TabFour'
-                component={ResultScreen}
+                component={SignupScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
