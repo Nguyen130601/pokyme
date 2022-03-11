@@ -10,6 +10,7 @@ import Svg, { Path } from 'react-native-svg'
 
 import { icons, COLORS } from '../constants'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import ResultScreen from '../screens/ResultScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -53,17 +54,21 @@ const TabBarCustomButton = ({ accessibilityState, children, onPress  }) => {
         )
     } else {
         return (
-            <TouchableOpacity
-                style={{
-                    flex: 1,
-                    height: 60,
-                    backgroundColor: COLORS.white
-                }}
-                activeOpacity={1}
-                onPress={onPress}
-            >
-                {children}
-            </TouchableOpacity>
+            <View style={{ flex: 1, alignItems: "center", backgroundColor: COLORS.white }}>
+                <TouchableOpacity
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: 50,
+                        height: 50,
+                        borderRadius: 25,
+                        backgroundColor: COLORS.white
+                    }}
+                    onPress={onPress}
+                >
+                    {children}
+                </TouchableOpacity>
+            </View>
         )
     }
 }
@@ -72,6 +77,7 @@ export default Tabs = () => {
     return (
         <Tab.Navigator
             screenOptions={{
+                headerShown: false,
                 tabBarShowLabel: false,
                 tabBarStyle: {
                     position: 'absolute',
@@ -108,7 +114,7 @@ export default Tabs = () => {
             />
             <Tab.Screen 
                 name='TabTwo'
-                component={HomeScreen}
+                component={ResultScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
@@ -130,7 +136,7 @@ export default Tabs = () => {
             />
             <Tab.Screen 
                 name='TabThree'
-                component={HomeScreen}
+                component={ResultScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
@@ -152,7 +158,7 @@ export default Tabs = () => {
             />
             <Tab.Screen 
                 name='TabFour'
-                component={HomeScreen}
+                component={ResultScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
