@@ -1,8 +1,10 @@
 import React, {Component, useState} from 'react'
-import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Image} from 'react-native'
-import { FlatList } from 'react-native-gesture-handler'
+import { SafeAreaView, Text, TouchableOpacity, View, StyleSheet, Image, Modal} from 'react-native'
+import { FlatList} from 'react-native-gesture-handler'
 
 import { SIZES, icons, COLORS, FONTS, images } from '../constants'
+
+import { renderHeader } from '../components/renderHeader'
 
 export default function HomeScreen ({navigation}: {navigation: any}) {
 
@@ -36,42 +38,13 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
       }
     ]
 
-    const renderHeader = () => {
-      return (
-        <View style={{
-          flexDirection: 'row', 
-          height: 50, 
-          width: SIZES.width, 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          }}
-        >
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <View
-                style={{
-                    width: '70%',
-                    height: "100%",
-                    backgroundColor: COLORS.gray,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: SIZES.radius
-                }}
-            >
-                <Text style={{ ...FONTS.h3 }}>Location</Text>
-            </View>
-        </View>
-    </View>
-      )
-    }
-
     const renderTopics = () => {
 
       const [selectedCategory, chooseCategory] = useState('1')
       const renderItem = ({ item }: {item : any}) => (
         <TouchableOpacity
             style={{
-              padding: SIZES.padding,
-              paddingBottom: SIZES.padding * 2,
+              padding: SIZES.padding* 0.5,
               backgroundColor: (selectedCategory === item.id) ? COLORS.primary : COLORS.white,
               borderRadius: SIZES.radius,
               alignItems: "center",
@@ -105,7 +78,7 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
 
           <Text
               style={{
-                  marginTop: SIZES.padding,
+                  marginTop: SIZES.padding * 0.5,
                   color: (selectedCategory == item.id) ? COLORS.white : COLORS.black,
                   ...FONTS.body4
               }}
@@ -115,9 +88,8 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
         </TouchableOpacity>
       )
       return (
-        <View style={{ padding: SIZES.padding * 2 }}>
-          <Text style={{...FONTS.h1}}>Main</Text>
-          <Text style={{...FONTS.h1, paddingBottom: SIZES.padding}}>Topics</Text>
+        <View style={{ padding: SIZES.padding }}>
+          <Text style={{...FONTS.h1}}>Chose your topics</Text>
           <FlatList
             horizontal
             data={topics} 
@@ -131,6 +103,9 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
     const renderquizlists = () => {
       const renderItem = ({ item }: {item : any}) => (
         <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Quiz")
+          }}
           style={{ marginBottom: SIZES.padding * 2 }}
         >
           <View
@@ -202,7 +177,7 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
                                   key={categoryId}
                               >
                                   <Text style={{ ...FONTS.body3 }}>{categoryId}</Text>
-                                  <Text style={{ ...FONTS.h3, color: COLORS.gray }}> . </Text>
+                                  <Text style={{ ...FONTS.body3 }}>.</Text>
                               </View>
                           )
                       })
@@ -213,15 +188,18 @@ export default function HomeScreen ({navigation}: {navigation: any}) {
       )
 
       return (
-        <FlatList
-          data={quizlists}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          style={{
-            paddingHorizontal: SIZES.padding * 2,
-            paddingBottom: 30
-            }}
-        />
+        <View>
+          <Text style={{...FONTS.h1, paddingLeft: SIZES.padding, paddingBottom: SIZES.padding}}>Choose your quizzz</Text>
+          <FlatList
+            data={quizlists}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            style={{
+              paddingHorizontal: SIZES.padding,
+              paddingBottom: 30
+              }}
+          />
+        </View>
       )
     }
 

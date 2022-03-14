@@ -99,7 +99,7 @@ export default Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
-                            source={icons.camera}
+                            source={icons.heart}
                             resizeMode='contain'
                             style={{
                                 width: 25,
@@ -121,7 +121,7 @@ export default Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
-                            source={icons.search}
+                            source={icons.heart}
                             resizeMode='contain'
                             style={{
                                 width: 25,
@@ -165,7 +165,7 @@ export default Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
-                            source={icons.camera}
+                            source={icons.heart}
                             resizeMode='contain'
                             style={{
                                 width: 25,

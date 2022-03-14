@@ -1,9 +1,11 @@
-import React, {Component} from 'react'
+import React, {Component, useRef} from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { useState, useEffect, useCallback} from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Animated } from 'react-native'
 import { COLORS, SIZES, FONTS } from '../constants'
 import { FlatList } from 'react-native-gesture-handler'
+import { renderHeader } from '../components/renderHeader'
+import { Audio } from 'expo-av'
 
 const quizzes = [
   {
@@ -22,11 +24,18 @@ const quizzes = [
 
 export default function QuizScreen ({ navigation}: {navigation: any}) {
 
+  const progress = useRef(new Animated.Value(0)).current
+
   const [playerScore, setPlayerScore] = useState(0)
+
   const [currentQuestion, setCurrentQuestion]  = useState(0)
+
   const [answer, setAnswer] = useState('')
 
   const [timeLeft, setTimeLeft] = useState(10)
+
+  const [disable, setDisable] = useState(true)
+
 
   let timer: any = () => {}
 
@@ -35,7 +44,7 @@ export default function QuizScreen ({ navigation}: {navigation: any}) {
     timer = setTimeout(() => {
           if(timeLeft <= 0){
               clearTimeout(timer)
-              navigation.navigate('Result')
+              //navigation.navigate('Result')
               return false;
           }
        setTimeLeft(timeLeft-1)
@@ -53,40 +62,10 @@ export default function QuizScreen ({ navigation}: {navigation: any}) {
       startTimer();
   }
 
-  const renderHeader = () => {
-    return (
-      <View style={{
-        flexDirection: 'row', 
-        height: 50, 
-        width: SIZES.width, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        position: 'absolute',
-        top: SIZES.padding 
-        }}
-      >
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <View
-              style={{
-                  width: '70%',
-                  height: "100%",
-                  backgroundColor: COLORS.gray,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: SIZES.radius
-              }}
-          >
-              <Text style={{ ...FONTS.h3 }}>Location</Text>
-          </View>
-      </View>
-  </View>
-    )
-  }
-
   useFocusEffect(
     useCallback(() => {
 
-      start()
+      //start()
       console.log('Screen was focused');
 
       return () => {
@@ -144,6 +123,7 @@ export default function QuizScreen ({ navigation}: {navigation: any}) {
     const renderItem = ({ item }: {item : any}) => (
       <TouchableOpacity
             onPress={()=>{
+              setDisable(false)
               setAnswer(item)
             }}
             style= {(item === answer) ? styles.selectedChoice : styles.normalChoice}
@@ -175,50 +155,84 @@ export default function QuizScreen ({ navigation}: {navigation: any}) {
   }
   
   const renderNextButton = () => {
+    const backgroundSound = async () => {
+      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
+
+      const playbackObject = new Audio.Sound()
+
+      await playbackObject.loadAsync(require('../assets/sounds/Correct-answer.mp3'))
+      await playbackObject.playAsync()
+    }
+    const backgroundSlideIn = () => {
+      Animated.timing(progress, {
+        toValue: 2,
+        duration: 2000,
+        useNativeDriver: false
+      }).start(() => {
+        if (answer === quizzes[currentQuestion].correct_option && currentQuestion !== (quizzes.length-1)) {
+          progress.setValue(0)
+          setCurrentQuestion(currentQuestion + 1)
+          setPlayerScore(playerScore + 100)
+          setAnswer('')
+          setDisable(true)
+          start()
+        }
+        else if (answer === quizzes[currentQuestion].correct_option) {
+          const result = playerScore + 100
+          progress.setValue(0)
+          setCurrentQuestion(0)
+          setPlayerScore(0)
+          setAnswer('')
+          setDisable(true)
+          clearTimeout(timer)
+          navigation.navigate('Result', { playerScore: result })
+        }
+        else {
+          progress.setValue(0)
+          setCurrentQuestion(0)
+          setPlayerScore(0)
+          setAnswer('')
+          setDisable(true)
+          clearTimeout(timer)
+          navigation.navigate('Result', { playerScore })
+        }
+      })
+    }
     return (
-      <View
-          style={{
-              padding: SIZES.padding * 2,
-              alignItems: 'center',
-              justifyContent: 'center'
-          }}
-      >
-          <TouchableOpacity
-              style={{
-                  width: SIZES.width * 0.7,
-                  backgroundColor: COLORS.primary,
-                  alignItems: 'center',
-                  borderRadius: SIZES.radius,
-                  padding: SIZES.padding * 0.5
-              }}
-              onPress={() => {
-                if (answer === quizzes[currentQuestion].correct_option && currentQuestion !== (quizzes.length-1)) { 
-                  setCurrentQuestion(currentQuestion + 1)
-                  setPlayerScore(playerScore + 100)
-                  start()
-                }
-                else if (answer === quizzes[currentQuestion].correct_option) {
-                  const result = playerScore + 100
-                  setCurrentQuestion(0)
-                  setPlayerScore(0)
-                  setAnswer('')
-                  clearTimeout(timer)
-                  navigation.navigate('Result', { playerScore: result })
-                }
-                else {
-                  setCurrentQuestion(0)
-                  setPlayerScore(0)
-                  setAnswer('')
-                  clearTimeout(timer)
-                  navigation.navigate('Result', { playerScore })
-                }
-              }}
-          >
-              <Text style={{ color: COLORS.white, ...FONTS.h2 }}>Next</Text>
+      <View style={{flex:1}}>
+        <Animated.View
+            style={{
+                flex: 1,
+                position: 'absolute',
+                top: -SIZES.padding,
+                left: -SIZES.width*0.5,
+                height: SIZES.height * 0.15,
+                width: SIZES.width,
+                alignSelf: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'green',
+                borderTopRightRadius: 25,
+                borderTopLeftRadius: 25,
+                opacity: progress
+            }}
+        >
+        </Animated.View>
+        <TouchableOpacity
+                disabled={disable}
+                style= { (disable === true) ? styles.disableButton : styles.enableButton  }
+                onPress={() => {
+                  backgroundSound()
+                  backgroundSlideIn()
+                }}
+            >
+                <Text style={{ color: COLORS.white, ...FONTS.h2 }}>Next</Text>
           </TouchableOpacity>
       </View>
     )
   }
+
+  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -253,6 +267,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'orange',
     marginBottom: SIZES.padding,
     borderRadius: 18
+  },
+  disableButton: {
+    position: 'absolute',
+    marginBottom: SIZES.padding,
+    alignSelf: 'center',
+    width: SIZES.width * 0.7,
+    backgroundColor: COLORS.gray,
+    alignItems: 'center',
+    borderRadius: SIZES.radius,
+    padding: SIZES.padding * 0.5,
+  },
+  enableButton: {
+    position: 'absolute',
+    marginBottom: SIZES.padding,
+    width: SIZES.width * 0.7,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: SIZES.radius,
+    padding: SIZES.padding * 0.5
   },
   shadow: {
     shadowColor: '#000',
