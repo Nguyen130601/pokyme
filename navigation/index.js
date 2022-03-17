@@ -14,6 +14,7 @@ import Svg, { Path } from 'react-native-svg'
 import { icons, COLORS } from '../constants'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import ResultScreen from '../screens/ResultScreen'
+import GameScreen from '../screens/GameScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -139,7 +140,7 @@ export default Tabs = () => {
             />
             <Tab.Screen 
                 name='TabThree'
-                component={LoginScreen}
+                component={GameScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image 
