@@ -1,54 +1,62 @@
-import React, { useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber/native'
-import { Text } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { FONTS } from '../constants'
+import React, { useState, forwardRef, useRef} from 'react'
 import * as THREE from 'three'
+import { Canvas} from '@react-three/fiber/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Text, Pressable} from 'react-native'
+import { FONTS } from '../constants'
 
-const scene = new THREE.scene(
-  
-)
+const LEFT = 'LEFT'
+const RIGHT = 'RIGHT'
+const FORWARD = 'FORWARD'
+const BACKWARD = 'BACKWARD'
 
-function Box(props : any ) {
-  const mesh = useRef(null)
+const Box = forwardRef((props : any, ref: any) => {
+
   const [hovered, setHover] = useState(false)
-  const [active, setActive] = useState(false)
+
   return (
     <mesh
       {...props}
-      ref={mesh}
-      scale={active ? 1.5 : 1}
-      onClick={(event) => setActive(!active)}
+      ref={ref}
       onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}>
+      onPointerOut={(event) => setHover(false)}
+    >
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
     </mesh>
   )
-}
+})
 
 export default function GameScreen() {
-  const Velocity = useRef({
-    x: 0,
-    y: 0,
-    z: 0
-  })
+  const [direction, setDirection] = useState(LEFT)
+  const meshRef = useRef([] as any)
 
-  useFrame(()=>{
-    Velocity.current.x += 1
-  })
+  const handlePress = (props : any) => {
+    if (props === LEFT) meshRef.current.position.x = meshRef.current.position.x += 0.5
+    if (props === RIGHT) meshRef.current.position.x = meshRef.current.position.x -= 0.5
+    if (props === FORWARD) meshRef.current.position.y = meshRef.current.position.y += 0.5
+    if (props === BACKWARD) meshRef.current.position.y = meshRef.current.position.y -= 0.5
+  }
 
   return (
     <SafeAreaView style={{ flex: 1}}>
-      <TouchableOpacity>
-        <Text style={{...FONTS.h1}}>BUTTON</Text>
-      </TouchableOpacity>
+      <Pressable onPress={() => {handlePress(LEFT)}}>
+        <Text style={{...FONTS.h1}}>{LEFT}</Text>
+      </Pressable>
+      <Pressable onPress={() => {handlePress(RIGHT)}}>
+        <Text style={{...FONTS.h1}}>{RIGHT}</Text>
+      </Pressable>
+      <Pressable onPress={() => {handlePress(FORWARD)}}>
+        <Text style={{...FONTS.h1}}>{FORWARD}</Text>
+      </Pressable>
+      <Pressable onPress={() => {handlePress(BACKWARD)}}>
+        <Text style={{...FONTS.h1}}>{BACKWARD}</Text>
+      </Pressable>
       <Canvas>
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
-        <Box position={[-1.2, 0, 0]} />
-        <Box position={[1.2, 0, 0]} />
+        <Box position={[0, 0, 0]} />
+        <Box direction={direction} ref={meshRef}/>
       </Canvas>
     </SafeAreaView>
   )
