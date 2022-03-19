@@ -1,41 +1,59 @@
 import React, { useState, forwardRef, useRef} from 'react'
-import * as THREE from 'three'
-import { Canvas} from '@react-three/fiber/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, Pressable} from 'react-native'
 import { FONTS } from '../constants'
+import { Asset } from 'expo-asset'
+import { GLView } from 'expo-gl'
+import ExpoTHREE, { THREE } from 'expo-three'
 
+const gltf = Asset.fromModule(require('../assets/scene.gltf'))
+
+let body = new THREE.Scene()
+
+const onContextCreate = async (gl : any) => {
+
+  const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
+
+  let scene = new THREE.Scene()
+
+  let camera = new THREE.PerspectiveCamera(80, width / height, 0.01, 1000)
+
+  let renderer : any = new ExpoTHREE.Renderer({ gl });
+  renderer.setSize(width, height)
+  renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
+  const geometry = new THREE.BoxGeometry();
+  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
+
+  camera.position.z = 5;
+
+  //scene.add(cube);
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    renderer.render(scene, camera);
+    gl.endFrameEXP();
+  };
+  animate();
+}
 const LEFT = 'LEFT'
 const RIGHT = 'RIGHT'
 const FORWARD = 'FORWARD'
 const BACKWARD = 'BACKWARD'
 
-const Box = forwardRef((props : any, ref: any) => {
+export default function GameScreen () {
 
-  const [hovered, setHover] = useState(false)
-
-  return (
-    <mesh
-      {...props}
-      ref={ref}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}
-    >
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
-    </mesh>
-  )
-})
-
-export default function GameScreen() {
   const [direction, setDirection] = useState(LEFT)
   const meshRef = useRef([] as any)
 
   const handlePress = (props : any) => {
-    if (props === LEFT) meshRef.current.position.x = meshRef.current.position.x += 0.5
-    if (props === RIGHT) meshRef.current.position.x = meshRef.current.position.x -= 0.5
-    if (props === FORWARD) meshRef.current.position.y = meshRef.current.position.y += 0.5
-    if (props === BACKWARD) meshRef.current.position.y = meshRef.current.position.y -= 0.5
+    if (props === LEFT) {}
+    if (props === RIGHT) {}
+    if (props === FORWARD) {} 
+    if (props === BACKWARD) {}
   }
 
   return (
@@ -52,12 +70,7 @@ export default function GameScreen() {
       <Pressable onPress={() => {handlePress(BACKWARD)}}>
         <Text style={{...FONTS.h1}}>{BACKWARD}</Text>
       </Pressable>
-      <Canvas>
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <Box position={[0, 0, 0]} />
-        <Box direction={direction} ref={meshRef}/>
-      </Canvas>
+      <GLView style={{ width: 300, height: 300 }} onContextCreate={onContextCreate} />
     </SafeAreaView>
   )
 }
